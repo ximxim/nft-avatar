@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { useRouter } from "next/router";
 import {
   useState,
@@ -6,19 +7,32 @@ import {
   createContext,
   FunctionComponent,
 } from "react";
-import { ThirdwebSDK, IAppModule, BundleDropModule, BundleDropMetadata } from '@3rdweb/sdk';
+import { ThirdwebSDK, IAppModule, NFTMetadata } from '@3rdweb/sdk';
 import { getDefaultProvider, BigNumber } from "ethers";
 import { EIP1193Provider } from "ethereum-types";
 
 import { Web3ModalService, IWalletInfo } from "../../services";
 
-const transactionRelayerUrl = process.env.NEXT_PUBLIC_OZ_URL as string;
 const rpcUrl = process.env.NEXT_PUBLIC_NETWORK_RPC_URL as string;
-const moduleAddress = process.env.NEXT_PUBLIC_THIRD_WEB_BUNDLE_MODULE as string;
+const moduleAddress = process.env.NEXT_PUBLIC_THIRD_WEB_NFT_MODULE as string;
+
+interface SignatureResponse {
+  payload: {
+    to: string,
+    id: string,
+    uri: string,
+    price: number,
+    metadata: NFTMetadata,
+    currencyAddress: string,
+    mintEndTimeEpochSeconds: number,
+    mintStartTimeEpochSeconds: number,
+  },
+  signature: string,
+}
 
 interface ICurrentUserState {
-  claiming: string;
-  nfts: BundleDropMetadata[];
+  minting: boolean;
+  nft?: NFTMetadata;
   isLoading: boolean;
   app?: IAppModule;
   isConnecting: boolean;
@@ -28,15 +42,14 @@ interface ICurrentUserState {
   isCorrectNetwork: boolean;
   switchNetwork: () => void;
   getBalance: (nftId: string) => Promise<BigNumber>;
-  claim: (nftId: string) => Promise<boolean>;
+  mint: (nft: NFTMetadata) => Promise<boolean>;
   connect: (retryCount?: number) => Promise<void>;
 }
 
 export const UserContext = createContext<ICurrentUserState>({
-  nfts: [],
-  claiming: '',
+  minting: false,
   isLoading: false,
-  claim: async () => false,
+  mint: async () => false,
   connect: async () => {},
   isConnecting: false,
   disconnect: () => {},
@@ -48,9 +61,9 @@ export const UserContext = createContext<ICurrentUserState>({
 export const UserProvider: FunctionComponent = ({ children }) => {
   const router = useRouter();
   const [walletInfo, setWalletInfo] = useState<IWalletInfo>();
-  const [nfts, setNfts] = useState<BundleDropMetadata[]>([]);
+  const [nft, setNft] = useState<NFTMetadata>();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [claiming, setClaiming] = useState<string>('');
+  const [minting, setMinting] = useState<boolean>(false);
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
   const [thirdWebSdk, setThirdWebSdk] = useState<ThirdwebSDK>();
@@ -81,7 +94,7 @@ export const UserProvider: FunctionComponent = ({ children }) => {
         const success = await Web3ModalService.connect();
         if (!success || !Web3ModalService.ethers) throw "Unable to conenct";
         const signer = await Web3ModalService.ethers.getSigner();
-        setThirdWebSdk(new ThirdwebSDK(signer, { transactionRelayerUrl }));
+        setThirdWebSdk(new ThirdwebSDK(signer));
         // 2. Switch to correct network
         await handleSwitchNetwork();
         // 3. Fetch wallet info to store
@@ -104,18 +117,20 @@ export const UserProvider: FunctionComponent = ({ children }) => {
     [handleDisconnectWallet, handleGetWalletInfo, handleSwitchNetwork]
   );
 
-  const handleClaim = useCallback(async (nftId: string) => {
+  const handleMint = useCallback(async (nftToMint: NFTMetadata) => {
     try {
-      if (!thirdWebSdk || !nftId) throw 'deps not ready';
-      setClaiming(nftId);
-      const module = thirdWebSdk.getBundleDropModule(moduleAddress);
-      await module.claim(nftId, 1);
+      if (!thirdWebSdk || !nftToMint) throw 'deps not ready';
+      setMinting(true);
+      const { data } = await axios.post<SignatureResponse>('/api/createSignature');
+      const module = thirdWebSdk.getNFTModule(moduleAddress);
+      const nftMinted = await module.mintWithSignature(data.payload, data.signature);
+      console.log('nftMinted', nftMinted);
       return true;
     } catch(ex) {
       console.log(ex);
       return false;
     } finally {
-      setClaiming('');
+      setMinting(false);
     }
   }, [thirdWebSdk]);
 
@@ -143,7 +158,7 @@ export const UserProvider: FunctionComponent = ({ children }) => {
         const sdk = new ThirdwebSDK(getDefaultProvider(rpcUrl))
         const module = sdk.getBundleDropModule(moduleAddress);
         const all = await module.getAll();
-        setNfts(all);
+        // setNft(all[0]);
       } finally {
         setIsLoading(false);
       }
@@ -168,16 +183,16 @@ export const UserProvider: FunctionComponent = ({ children }) => {
   return (
     <UserContext.Provider
       value={{
-        nfts,
+        nft,
         connect,
-        claiming,
+        minting,
         isLoading,
         getBalance,
         walletInfo,
         thirdWebSdk,
         isConnecting,
         isCorrectNetwork,
-        claim: handleClaim,
+        mint: handleMint,
         disconnect: handleDisconnectWallet,
         switchNetwork: handleSwitchNetwork,
       }}
