@@ -1,4 +1,6 @@
+import axios from 'axios';
 import { useState } from "react";
+import dynamic from 'next/dynamic';
 import type { NextPage } from "next";
 import { BundleDropMetadata } from "@3rdweb/sdk";
 import {
@@ -11,7 +13,14 @@ import {
   SimpleGrid,
 } from "@chakra-ui/react";
 
-import { Header, Card, useUserContext, DetailsModal } from "../components";
+const Dropzone = dynamic(
+    () => import('../components/Dropzone/Dropzone'),
+    {
+        ssr: false
+    }
+)
+
+import { Header, Card, useUserContext } from "../components";
 
 /* ======================= HOME PAGE ======================= */
 const Home: NextPage = () => {
@@ -29,19 +38,17 @@ const Home: NextPage = () => {
             fontSize="lg"
             fontWeight="semibold"
             mt={2}
-            onClick={() =>
-              mint({
-                id: 'Something',
-                uri: 'ipfs://bafkreiemrdnm26x3mpzjkhpewirwrzubjvuje2rbj2lgqexesbqq72utey',
-                name: "Some Awesome NFT",
-                description: "This is a description of the NFT",
-                image:
-                  "ipfs://bafkreiemrdnm26x3mpzjkhpewirwrzubjvuje2rbj2lgqexesbqq72utey",
-              })
-            }
           >
             Claim your dinosaur NFT on us
           </Text>
+          <Dropzone onFileAccepted={(file) => {
+            const body = new FormData();
+            body.append("file", file);
+            body.append('name', 'Henry');
+            body.append('description', 'up to');
+            // @ts-ignore
+            mint(body);
+          }} />
         </Box>
       </Container>
       <Container as="footer" maxW="xl" textAlign="center" py={10}>
