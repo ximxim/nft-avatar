@@ -13,14 +13,7 @@ import {
   SimpleGrid,
 } from "@chakra-ui/react";
 
-const Dropzone = dynamic(
-    () => import('../components/Dropzone/Dropzone'),
-    {
-        ssr: false
-    }
-)
-
-import { Header, Card, useUserContext } from "../components";
+import { Header, Card, useUserContext, IDForm } from "../components";
 
 /* ======================= HOME PAGE ======================= */
 const Home: NextPage = () => {
@@ -28,14 +21,7 @@ const Home: NextPage = () => {
 
   return (
     <Flex columnGap="100px" flexDirection={['column', null, 'row-reverse']} align="flex-start" p={4}>
-      <Dropzone onFileAccepted={(file) => {
-        const body = new FormData();
-        body.append("file", file);
-        body.append('name', 'Henry');
-        body.append('description', 'up to');
-        // @ts-ignore
-        mint(body);
-      }} />
+      <IDForm />
       <Box flex={1}>
         <Heading as="h1" size="4xl">
           Jurrasic Park

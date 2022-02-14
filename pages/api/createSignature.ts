@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   };
   try {
     const { fields, files } = await post(req, res);
-    console.log(files.file);
+    console.log( fields, files );
     const metadata = {
       ...fields,
       image: readFileSync(files.file.filepath),

@@ -8,8 +8,7 @@ export default function Dropzone({ onFileAccepted }: { onFileAccepted: (file: Fi
   const onDrop = useCallback((acceptedFiles) => {
     onFileAccepted(acceptedFiles[0]);
     setCreateObjectURL(URL.createObjectURL(acceptedFiles[0]));
-
-  }, []);
+  }, [onFileAccepted]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop, accept: 'image/*', maxFiles: 1, multiple: false,
@@ -17,22 +16,22 @@ export default function Dropzone({ onFileAccepted }: { onFileAccepted: (file: Fi
 
   const dropText = isDragActive ? 'Drop the files here ...' : 'Drag \'n\' drop .torrent file here, or click to select files';
 
-  const activeBg = useColorModeValue('gray.100', 'gray.600');
+  const activeBg = useColorModeValue('gray.700', 'gray.700');
   const borderColor = useColorModeValue(
-    isDragActive ? 'teal.300' : 'gray.300',
-    isDragActive ? 'teal.500' : 'gray.500',
+    isDragActive ? 'teal.300' : 'gray.700',
+    isDragActive ? 'teal.500' : 'gray.700',
   );
 
   return (
     <Center
-      w="sm"
-      h="sm"
+      w="xs"
+      h="xs"
       cursor="pointer"
       bg={isDragActive ? activeBg : 'transparent'}
       _hover={{ bg: activeBg }}
       transition="background-color 0.2s ease"
       borderRadius={4}
-      border="3px dashed"
+      border="2px dashed"
       borderColor={borderColor}
       {...getRootProps()}
     >

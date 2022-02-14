@@ -42,7 +42,7 @@ interface ICurrentUserState {
   isCorrectNetwork: boolean;
   switchNetwork: () => void;
   getBalance: (nftId: string) => Promise<BigNumber>;
-  mint: (nft: NFTMetadata) => Promise<boolean>;
+  mint: (body: FormData) => Promise<boolean>;
   connect: (retryCount?: number) => Promise<void>;
 }
 
@@ -117,14 +117,15 @@ export const UserProvider: FunctionComponent = ({ children }) => {
     [handleDisconnectWallet, handleGetWalletInfo, handleSwitchNetwork]
   );
 
-  const handleMint = useCallback(async (body) => {
+  const handleMint = useCallback(async (body: FormData) => {
     try {
       if (!thirdWebSdk || !body) throw 'deps not ready';
       setMinting(true);
       const { data } = await axios.post<SignatureResponse>('/api/createSignature', body);
       const module = thirdWebSdk.getNFTModule(moduleAddress);
       const nftMinted = await module.mintWithSignature(data.payload, data.signature);
-      console.log('nftMinted', nftMinted.toNumber());
+      const mintedNft = await module.get(nftMinted.toString());
+      setNft(mintedNft);
       return true;
     } catch(ex) {
       console.log(ex);
