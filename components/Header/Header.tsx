@@ -12,6 +12,7 @@ import {
   Link,
   Alert,
   Button,
+  Avatar,
   Popover,
   Skeleton,
   ListItem,
@@ -34,7 +35,7 @@ const networkName = process.env.NEXT_PUBLIC_CHAIN_NAME as string;
 export const Header: FunctionComponent = () => {
   const { toggleColorMode } = useColorMode();
   const bgColor = useColorModeValue("white", "gray.800");
-  const { isCorrectNetwork, connect, isConnecting, walletInfo, switchNetwork } =
+  const { isCorrectNetwork, connect, isConnecting, walletInfo, switchNetwork, nft } =
     useUserContext();
 
   return (
@@ -62,7 +63,7 @@ export const Header: FunctionComponent = () => {
                 <IconButton
                   ml={1}
                   aria-label="Toggle theme"
-                  icon={<MdPerson />}
+                  icon={<Avatar size='xs' name={nft?.name} src={nft?.image} />}
                 />
               </PopoverTrigger>
               <PopoverContent>

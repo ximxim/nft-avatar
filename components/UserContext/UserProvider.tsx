@@ -181,6 +181,17 @@ export const UserProvider: FunctionComponent = ({ children }) => {
     });
   }, []);
 
+  useEffect(() => {
+    if (!walletInfo?.account || nft) return;
+
+    (async () => {
+      const sdk = new ThirdwebSDK(getDefaultProvider(rpcUrl));
+      const module = sdk.getNFTModule(moduleAddress);
+      const nfts = await module.getOwned(walletInfo?.account);
+      setNft(nfts[nfts.length - 1]);
+    })();
+  }, [walletInfo, nft]);
+
   return (
     <UserContext.Provider
       value={{
