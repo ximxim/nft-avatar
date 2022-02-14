@@ -1,24 +1,30 @@
 import React, {
-  FunctionComponent,
-  useCallback,
-  useEffect,
   useState,
+  useEffect,
+  useCallback,
+  FunctionComponent,
 } from "react";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import dynamic from "next/dynamic";
 import {
   Box,
+  Code,
   Flex,
-  FormControl,
-  FormLabel,
   Input,
-  FormErrorMessage,
   Button,
+  Divider,
+  Collapse,
+  FormLabel,
   IconButton,
+  FormControl,
+  useDisclosure,
+  FormErrorMessage,
 } from "@chakra-ui/react";
-import { MdAdd, MdClose } from "react-icons/md";
+import * as yup from "yup";
+import dynamic from "next/dynamic";
+import { useForm } from "react-hook-form";
+import { MdAdd, MdClose, MdRemove } from "react-icons/md";
+import { yupResolver } from "@hookform/resolvers/yup";
+
+import { PropertiesForm, PropertiesFormValues } from "./components";
 import { useUserContext } from "../UserContext/useUserContext";
 
 const Dropzone = dynamic(() => import("../Dropzone/Dropzone"), {
@@ -38,7 +44,8 @@ const schema = yup
   .required();
 
 export const IDForm: FunctionComponent = () => {
-  const [properties, setProperties] = useState<Record<'trait_type' | 'value', string>[]>([]);
+  const { isOpen, onToggle } = useDisclosure();
+  const [properties, setProperties] = useState<PropertiesFormValues[]>([]);
   const { mint, isLoading, minting, nft } = useUserContext();
   console.log(nft);
   const {
@@ -72,91 +79,70 @@ export const IDForm: FunctionComponent = () => {
     };
   }, [register]);
 
-  const handleAddProperty = useCallback(() => {
-    setProperties((prevState) => [...prevState, { trait_type: "", value: "" }]);
+  const handleAddProperty = useCallback((property: PropertiesFormValues) => {
+    const { display_type, ...rest } = property;
+    setProperties((prevState) => [
+      ...prevState,
+      {
+        display_type: display_type !== "default" ? display_type : undefined,
+        ...rest,
+      },
+    ]);
   }, []);
 
   const handleRemoveProperty = useCallback((index: number) => {
     setProperties((prevState) => [...prevState.filter((_, i) => i !== index)]);
   }, []);
 
-  const handleKeyChange = useCallback((index: number, value: string) => {
-    setProperties((prevState) => [
-      ...prevState.map((val, i) => {
-        if (i === index) return { trait_type: value, value: val.value };
-        return val;
-      }),
-    ]);
-  }, []);
-
-  const handleValueChange = useCallback((index: number, value: string) => {
-    setProperties((prevState) => [
-      ...prevState.map((val, i) => {
-        if (i === index) return { trait_type: val.trait_type, value };
-        return val;
-      }),
-    ]);
-  }, []);
-
   return (
     <Box maxW="xs">
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <FormControl mb={4} isInvalid={!!errors.image?.message}>
-          <Dropzone onFileAccepted={(file) => setValue("image", file)} />
-          <FormErrorMessage>{errors.image?.message}</FormErrorMessage>
-        </FormControl>
-        <FormControl mb={4} isInvalid={!!errors.name?.message}>
-          <FormLabel htmlFor="name">Name</FormLabel>
-          <Input
-            id="name"
-            type="name"
-            placeholder="Name"
-            {...register("name")}
-          />
-          <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
-        </FormControl>
-        {properties.map((val, index) => (
-          <Flex gap={2} key={index}>
-            <FormControl mb={4}>
-              <Input
-                placeholder="key"
-                onChange={(e) => handleKeyChange(index, e.target.value)}
-              />
-            </FormControl>
-            <FormControl mb={4}>
-              <Input
-                placeholder="value"
-                onChange={(e) => handleValueChange(index, e.target.value)}
-              />
-            </FormControl>
+      <FormControl mb={4} isInvalid={!!errors.image?.message}>
+        <Dropzone onFileAccepted={(file) => setValue("image", file)} />
+        <FormErrorMessage>{errors.image?.message}</FormErrorMessage>
+      </FormControl>
+      <FormControl mb={4} isInvalid={!!errors.name?.message}>
+        <FormLabel htmlFor="name" hidden>Name</FormLabel>
+        <Input id="name" type="name" placeholder="Name" {...register("name")} />
+        <FormErrorMessage>{errors.name?.message}</FormErrorMessage>
+      </FormControl>
+      <Box maxH="180px" overflow="scroll">
+        {properties.map((prop, index) => (
+          <Flex key={index} maxW="xs" mb={4}>
+            <Code mr={2} fontSize={12}>
+              {JSON.stringify(prop, null, 2)}
+            </Code>
             <IconButton
-              onClick={() => handleRemoveProperty(index)}
-              variant="outline"
-              aria-label="Call Sage"
               fontSize="20px"
+              variant="outline"
               icon={<MdClose />}
+              aria-label="Remove Property"
+              onClick={() => handleRemoveProperty(index)}
             />
           </Flex>
         ))}
-        <Flex gap={4}>
-          <IconButton
-            onClick={handleAddProperty}
-            variant="outline"
-            aria-label="Call Sage"
-            fontSize="20px"
-            icon={<MdAdd />}
-          />
-          <Button
-            w="100%"
-            isLoading={minting || isLoading}
-            type="submit"
-            disabled={!isValid}
-            loadingText={minting ? "Creating Your Avatar" : ""}
-          >
-            Create NFT Avatar
-          </Button>
-        </Flex>
-      </form>
+      </Box>
+      <Collapse in={isOpen} animateOpacity>
+        <Divider mb={4} />
+        <PropertiesForm onSubmit={handleAddProperty} />
+      </Collapse>
+      <Flex gap={4}>
+        <IconButton
+          onClick={onToggle}
+          variant="outline"
+          aria-label="Toggle Properties"
+          fontSize="20px"
+          icon={isOpen ? <MdRemove /> : <MdAdd />}
+        />
+        <Button
+          w="100%"
+          disabled={!isValid}
+          isLoading={minting || isLoading}
+          onClick={handleSubmit(onSubmit)}
+          loadingText={minting ? "Creating Your Avatar" : ""}
+        >
+          Create NFT Avatar
+        </Button>
+      </Flex>
     </Box>
   );
 };
