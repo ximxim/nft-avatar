@@ -38,7 +38,7 @@ export const Header: FunctionComponent = () => {
     useUserContext();
 
   return (
-    <Box position="fixed" w="100%" zIndex={1} backgroundColor={bgColor}>
+    <Box w="100%" zIndex={1} backgroundColor={bgColor}>
       <Container
         maxW="container.xl"
         py={3}

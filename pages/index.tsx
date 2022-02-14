@@ -8,7 +8,7 @@ import {
   Link,
   Text,
   Heading,
-  Skeleton,
+  Flex,
   Container,
   SimpleGrid,
 } from "@chakra-ui/react";
@@ -27,43 +27,28 @@ const Home: NextPage = () => {
   const { mint } = useUserContext();
 
   return (
-    <Box minHeight="100vh" display="flex" flexDir="column">
-      <Header />
-      <Container maxW="container.xl" mt="95px" flex={1}>
-        <Box textAlign="center">
-          <Heading as="h1" size="4xl">
-            Jurrasic Park
-          </Heading>
-          <Text
-            fontSize="lg"
-            fontWeight="semibold"
-            mt={2}
-          >
-            Claim your dinosaur NFT on us
-          </Text>
-          <Dropzone onFileAccepted={(file) => {
-            const body = new FormData();
-            body.append("file", file);
-            body.append('name', 'Henry');
-            body.append('description', 'up to');
-            // @ts-ignore
-            mint(body);
-          }} />
-        </Box>
-      </Container>
-      <Container as="footer" maxW="xl" textAlign="center" py={10}>
-        <Text>
-          Made with{" "}
-          <span role="img" aria-label="heart emoji">
-            ❤️
-          </span>{" "}
-          by{" "}
-          <Link href="https://github.com/ximxim" isExternal>
-            ximxim
-          </Link>
+    <Flex columnGap="100px" flexDirection={['column', null, 'row-reverse']} align="flex-start" p={4}>
+      <Dropzone onFileAccepted={(file) => {
+        const body = new FormData();
+        body.append("file", file);
+        body.append('name', 'Henry');
+        body.append('description', 'up to');
+        // @ts-ignore
+        mint(body);
+      }} />
+      <Box flex={1}>
+        <Heading as="h1" size="4xl">
+          Jurrasic Park
+        </Heading>
+        <Text
+          fontSize="lg"
+          fontWeight="semibold"
+          mt={2}
+        >
+          Claim your dinosaur NFT on us
         </Text>
-      </Container>
-    </Box>
+      </Box>
+    </Flex>
   );
 };
 

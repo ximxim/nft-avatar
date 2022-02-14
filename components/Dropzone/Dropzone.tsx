@@ -12,7 +12,7 @@ export default function Dropzone({ onFileAccepted }: { onFileAccepted: (file: Fi
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop, accept: '.png', maxFiles: 1, multiple: false,
+    onDrop, accept: 'image/*', maxFiles: 1, multiple: false,
   });
 
   const dropText = isDragActive ? 'Drop the files here ...' : 'Drag \'n\' drop .torrent file here, or click to select files';
