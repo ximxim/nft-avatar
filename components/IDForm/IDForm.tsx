@@ -46,7 +46,7 @@ const schema = yup
 export const IDForm: FunctionComponent = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [properties, setProperties] = useState<PropertiesFormValues[]>([]);
-  const { mint, isLoading, minting, nft } = useUserContext();
+  const { mint, minting, nft, walletInfo } = useUserContext();
   console.log(nft);
   const {
     register,
@@ -95,7 +95,7 @@ export const IDForm: FunctionComponent = () => {
   }, []);
 
   return (
-    <Box maxW="xs">
+    <Box maxW="xs" alignSelf={['center', null, 'flex-start']}>
       <FormControl mb={4} isInvalid={!!errors.image?.message}>
         <Dropzone onFileAccepted={(file) => setValue("image", file)} />
         <FormErrorMessage>{errors.image?.message}</FormErrorMessage>
@@ -135,9 +135,9 @@ export const IDForm: FunctionComponent = () => {
         />
         <Button
           w="100%"
-          disabled={!isValid}
-          isLoading={minting || isLoading}
+          isLoading={minting}
           onClick={handleSubmit(onSubmit)}
+          disabled={!isValid || !walletInfo?.account}
           loadingText={minting ? "Creating Your Avatar" : ""}
         >
           Create NFT Avatar

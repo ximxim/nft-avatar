@@ -2,52 +2,33 @@ import { motion } from "framer-motion";
 import { ArrowUpIcon } from "@chakra-ui/icons";
 import { BundleDropMetadata } from "@3rdweb/sdk";
 import { FunctionComponent } from "react";
-import { Img, Box, Flex, Text, Link, BoxProps } from "@chakra-ui/react";
+import { Stack, StackProps, Box, Flex, Text, Link, BoxProps, Icon, Heading, useColorModeValue } from "@chakra-ui/react";
 
-const MotionImg = motion(Img);
-const contractAddress = process.env
-  .NEXT_PUBLIC_THIRD_WEB_BUNDLE_MODULE as string;
+import { BsGlobe, BsFillCheckCircleFill } from 'react-icons/bs';
 
-export const Card: FunctionComponent<{ nft: BundleDropMetadata } & BoxProps> = ({
-  nft,
+interface ICardProps extends StackProps {
+  icon: any;
+  icon2: any;
+  heading: string;
+  body: string;
+}
+
+export const Card: FunctionComponent<ICardProps> = ({
+  icon,
+  icon2,
+  heading,
+  body,
   ...boxProps
 }) => {
+
   return (
-    <Box borderRadius={["sm", null, "md"]} overflow="hidden">
-      <Box
-        {...boxProps}
-        cursor="pointer"
-        position="relative"
-        overflow="hidden"
-      >
-        <MotionImg
-          transition={{ duration: 0.3 }}
-          whileHover={{ scale: 1.1 }}
-          w="100%"
-          h="100%"
-          objectFit="cover"
-          src={nft.metadata.image}
-        />
+    <Stack {...boxProps}>
+      <Box>
+        <Icon as={icon} fontSize={48} />
+        <Icon as={icon2} fontSize={48} ml={2} />
       </Box>
-      <Box px="4" py="2" w="100%">
-        <Flex align="center" justify="space-between">
-          <Text fontSize={["xs", null, "sm"]}>
-            <Link
-              fontWeight="semibold"
-              href={`https://testnets.opensea.io/assets/mumbai/${contractAddress}/${nft.metadata.id}`}
-              isExternal
-            >
-              {nft.metadata.name}
-            </Link>
-          </Text>
-          <Flex align="center">
-            <ArrowUpIcon />
-            <Text ml={1} fontSize={["xs", null, "sm"]}>
-              {nft.supply.toNumber()}
-            </Text>
-          </Flex>
-        </Flex>
-      </Box>
-    </Box>
+      <Heading as="h2">{heading}</Heading>
+      <Text>{body}</Text>
+    </Stack>
   );
 };

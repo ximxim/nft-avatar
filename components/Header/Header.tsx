@@ -48,7 +48,7 @@ export const Header: FunctionComponent = () => {
         alignItems="center"
       >
         <Button variant="ghost" fontSize="xl">
-          Jurraic Park
+          NFT Avatar
         </Button>
         <Box>
           <IconButton

@@ -153,17 +153,17 @@ export const UserProvider: FunctionComponent = ({ children }) => {
       connect();
     }
 
-    (async () => {
-      try {
-        setIsLoading(true);
-        const sdk = new ThirdwebSDK(getDefaultProvider(rpcUrl))
-        const module = sdk.getBundleDropModule(moduleAddress);
-        const all = await module.getAll();
-        // setNft(all[0]);
-      } finally {
-        setIsLoading(false);
-      }
-    })();
+    // (async () => {
+    //   try {
+    //     setIsLoading(true);
+    //     const sdk = new ThirdwebSDK(getDefaultProvider(rpcUrl))
+    //     const module = sdk.getBundleDropModule(moduleAddress);
+    //     const all = await module.getAll();
+    //     // setNft(all[0]);
+    //   } finally {
+    //     setIsLoading(false);
+    //   }
+    // })();
 
     const provider = window.ethereum as EIP1193Provider;
 
