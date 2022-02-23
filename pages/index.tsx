@@ -41,7 +41,7 @@ const Home: NextPage = () => {
       <Flex
         flexDirection={["column", null, "row-reverse"]}
         align="flex-start"
-        justifyContent="space-around"
+        justifyContent="space-between"
         p={4}
       >
         <IDForm />
