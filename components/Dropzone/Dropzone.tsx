@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { AiFillFileAdd } from 'react-icons/ai';
-import { Center, useColorModeValue, Icon, Image, Box } from '@chakra-ui/react';
+import { FaUserAstronaut } from 'react-icons/fa';
+import { Center, useColorModeValue, Icon, Image, Text, Flex } from '@chakra-ui/react';
 
 export default function Dropzone({ onFileAccepted }: { onFileAccepted: (file: File) => void }) {
   const [createObjectURL, setCreateObjectURL] = useState<string>();
@@ -14,13 +14,10 @@ export default function Dropzone({ onFileAccepted }: { onFileAccepted: (file: Fi
     onDrop, accept: 'image/*', maxFiles: 1, multiple: false,
   });
 
-  const dropText = isDragActive ? 'Drop the files here ...' : 'Drag \'n\' drop .torrent file here, or click to select files';
+  const dropText = isDragActive ? 'Drop the file here ...' : 'Drag \'n\' drop image file here, or click to select a file';
 
-  const activeBg = useColorModeValue('gray.700', 'gray.700');
-  const borderColor = useColorModeValue(
-    isDragActive ? 'teal.300' : 'gray.700',
-    isDragActive ? 'teal.500' : 'gray.700',
-  );
+  const activeBg = useColorModeValue('gray.300', 'gray.700');
+  const borderColor = useColorModeValue('gray.300', 'gray.700');
 
   return (
     <Center
@@ -39,10 +36,10 @@ export default function Dropzone({ onFileAccepted }: { onFileAccepted: (file: Fi
       {createObjectURL ? (
         <Image src={createObjectURL} alt="Uploaded Image" />
       ) : (
-        <Box p={10}>
-          <Icon as={AiFillFileAdd} mr={2} />
-          <p>{dropText}</p>
-        </Box>
+        <Flex p={10} flexDir="column" justify="center" align="center">
+          <Icon as={FaUserAstronaut} m={2} fontSize={100} opacity={0.5} />
+          <Text textAlign="center" opacity={0.5}>{dropText}</Text>
+        </Flex>
       )}
     </Center>
   );

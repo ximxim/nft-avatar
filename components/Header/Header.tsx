@@ -1,15 +1,19 @@
-import { MoonIcon } from "@chakra-ui/icons";
+import { MoonIcon, SunIcon } from "@chakra-ui/icons";
 import { FunctionComponent } from "react";
 import {
   MdPerson,
   MdNetworkCell,
   MdAccountBalanceWallet,
 } from "react-icons/md";
+import { GiFishingBoat } from 'react-icons/gi';
+import { FaUserAstronaut, FaGithub } from 'react-icons/fa';
 import {
   Box,
   Text,
   List,
   Link,
+  Icon,
+  Flex,
   Alert,
   Button,
   Avatar,
@@ -26,6 +30,7 @@ import {
   PopoverContent,
   useColorModeValue,
   PopoverCloseButton,
+  Heading,
 } from "@chakra-ui/react";
 
 import { useUserContext } from "../UserContext";
@@ -33,7 +38,7 @@ import { useUserContext } from "../UserContext";
 const networkName = process.env.NEXT_PUBLIC_CHAIN_NAME as string;
 
 export const Header: FunctionComponent = () => {
-  const { toggleColorMode } = useColorMode();
+  const { toggleColorMode, colorMode } = useColorMode();
   const bgColor = useColorModeValue("white", "gray.800");
   const { isCorrectNetwork, connect, isConnecting, walletInfo, switchNetwork, nft } =
     useUserContext();
@@ -47,21 +52,34 @@ export const Header: FunctionComponent = () => {
         justifyContent="space-between"
         alignItems="center"
       >
-        <Button variant="ghost" fontSize="xl">
-          NFT Avatar
-        </Button>
+        <Flex alignItems="center">
+          <Icon as={FaUserAstronaut} fontSize={40} mr={3} />
+          <Heading display={['none', 'block']}>NFT Avatar</Heading>
+        </Flex>
         <Box>
+          <IconButton
+            ml={2}
+            onClick={() => window.open(process.env.NEXT_PUBLIC_OPEN_SEA_LINK, '_blank').focus()}
+            aria-label="Checkout Collection on OpenSea"
+            icon={<GiFishingBoat />}
+          />
+          <IconButton
+            ml={2}
+            onClick={() => window.open(process.env.NEXT_PUBLIC_GITHUBT_LINK, '_blank').focus()}
+            aria-label="Checkout Github Repo"
+            icon={<FaGithub />}
+          />
           <IconButton
             ml={2}
             onClick={toggleColorMode}
             aria-label="Toggle theme"
-            icon={<MoonIcon />}
+            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
           />
           {walletInfo?.account ? (
             <Popover>
               <PopoverTrigger>
                 <IconButton
-                  ml={1}
+                  ml={2}
                   aria-label="Toggle theme"
                   icon={<Avatar size='xs' name={nft?.name} src={nft?.image} />}
                 />

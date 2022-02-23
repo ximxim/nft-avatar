@@ -23,12 +23,12 @@ export const Card: FunctionComponent<ICardProps> = ({
 
   return (
     <Stack {...boxProps}>
-      <Box>
-        <Icon as={icon} fontSize={48} />
-        <Icon as={icon2} fontSize={48} ml={2} />
-      </Box>
-      <Heading as="h2">{heading}</Heading>
-      <Text>{body}</Text>
+      <Flex justify={["center", null, 'flex-start']}>
+        <Icon as={icon} fontSize={40} />
+        <Icon as={icon2} fontSize={40} ml={2} />
+      </Flex>
+      <Heading as="h2" fontSize={26} textAlign={['center', null, 'initial']}>{heading}</Heading>
+      <Text textAlign={['center', null, 'initial']}>{body}</Text>
     </Stack>
   );
 };
