@@ -45,13 +45,13 @@ const Home: NextPage = () => {
         p={4}
       >
         <IDForm />
-        <Stack pr={[0, null, 8]} gap={["8rem", null, "15rem"]} mb="10rem" maxW="xl">
+        <Stack pr={[0, null, 8]} gap={["8rem", null, "15rem"]} mb="10rem" maxW={[null, null, 'sm', "xl"]}>
           <Stack mt={['2rem', null, "9rem"]}>
             <Heading as="h1" size="2xl" lineHeight={1.1} textAlign={['center', null, 'initial']}>
               One avatar for everything, everywhere.
             </Heading>
             <Text fontSize="lg" fontWeight="semibold" textAlign={['center', null, 'initial']}>
-              Gravatar powers your public profile, visible wherever you post,
+              NFT avatar powers your public profile, visible wherever you post,
               comment, and interact online.
             </Text>
             <Flex fontSize={18} align="center" pt={4} display={['none', null, 'flex']}>
@@ -74,19 +74,19 @@ const Home: NextPage = () => {
               icon={RiUser5Fill}
               icon2={MdOutlineAlternateEmail}
               heading="More than just an image."
-              body="Instantly tell the web who you are and where people can find you. Gravatar can display links, photos, contact info, wallet addresses, and other details."
+              body="Instantly tell the web3 who you are and where people can find you. NFT avatar can display avatar, wallet address, and other details such as properties."
             />
             <Card
               icon={BsShieldLockFill}
               icon2={BsWallet2}
               heading="Public, open, and responsible."
-              body="Your avatar is linked to a public email address. You choose what to display on Gravatar-enabled sites: what you share on your profile is open to the world."
+              body="Your avatar is linked to a public wallet address. You choose what to display on NFT avatar enabled sites: what you share on your avatar is open to the web3 world."
             />
           </Stack>
           <Stack gap="1rem">
-            <Heading as="h6" fontSize={14} textAlign={['center', null, 'initial']}>FOR SITE OWNERS & DEVELOPERS</Heading>
-            <Heading as="h2" fontSize={26} textAlign={['center', null, 'initial']}>Join a network of brands building an open web.</Heading>
-            <Text textAlign={['center', null, 'initial']}>Resources and plugins for popular content management systems will help you use Gravatar in no time. From a streamlined signup flow to image manipulation and other built‑in benefits, Gravatar offers many possibilities through open standards.</Text>
+            <Heading as="h6" fontSize={14} textAlign={['center', null, 'initial']}>FOR WEB3 SITE OWNERS & DEVELOPERS</Heading>
+            <Heading as="h2" fontSize={26} textAlign={['center', null, 'initial']}>Join a network of brands building an open web3.</Heading>
+            <Text textAlign={['center', null, 'initial']}>Simple open REST API allows retrieving wallet address avatar information easy from any platform. NFT avatar offers many possibilities through open standards.</Text>
             <Stack justify={["center", null, 'initial']} align={["center", null, 'initial']} fontSize={11}>
               <Heading as="h5" fontSize={20} textAlign={['center', null, 'initial']}>Basic Usage</Heading>
               <Box maxW={['xs', 'sm', 'md', 'lg']}>
@@ -98,7 +98,8 @@ GET ${typeof window === 'undefined' ? '[DOMAIN NAME]' : window.location.origin}/
               <Heading as="h5" fontSize={20} pt={4} textAlign={['center', null, 'initial']}>Advanced Usage</Heading>
               <Box maxW={['xs', 'sm', 'md', 'lg']}>
                 <SyntaxHighlighter language="javascript" style={solarized} showLineNumbers customStyle={{ borderRadius: '8px' }}>
-                  {`import { ThirdwebSDK } from '@3rdweb/sdk';
+                  {`// Use this setup for dedicated RPC urls for faster fetching
+import { ThirdwebSDK } from '@3rdweb/sdk';
 import { getDefaultProvider } from 'ethers';
 import { useState } from 'react';
 

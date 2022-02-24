@@ -59,7 +59,7 @@ export const Header: FunctionComponent = () => {
         <Box>
           <IconButton
             ml={2}
-            onClick={() => window.open(process.env.NEXT_PUBLIC_OPEN_SEA_LINK, '_blank').focus()}
+            onClick={() => window.open(process.env.NEXT_PUBLIC_OPEN_SEA_COLLECTION, '_blank').focus()}
             aria-label="Checkout Collection on OpenSea"
             icon={<GiFishingBoat />}
           />

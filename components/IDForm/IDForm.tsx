@@ -9,6 +9,7 @@ import {
   Code,
   Flex,
   Input,
+  Heading,
   Button,
   Divider,
   Collapse,
@@ -95,7 +96,7 @@ export const IDForm: FunctionComponent = () => {
   }, []);
 
   return (
-    <Box maxW="xs" alignSelf={['center', null, 'flex-start']}>
+    <Box maxW="xs" maxH={[null, null, "85vh"]} overflow="scroll" alignSelf={['center', null, 'flex-start']} position={['relative', null, "sticky"]} top={[null, null, 4]}>
       <FormControl mb={4} isInvalid={!!errors.image?.message}>
         <Dropzone onFileAccepted={(file) => setValue("image", file)} />
         <FormErrorMessage>{errors.image?.message}</FormErrorMessage>

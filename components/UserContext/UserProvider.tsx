@@ -10,6 +10,24 @@ import {
 import { ThirdwebSDK, IAppModule, NFTMetadata } from '@3rdweb/sdk';
 import { getDefaultProvider, BigNumber } from "ethers";
 import { EIP1193Provider } from "ethereum-types";
+import {
+  Flex,
+  Text,
+  Icon,
+  Image,
+  Modal,
+  Button,
+  Heading,
+  ModalBody,
+  ModalHeader,
+  ModalFooter,
+  ModalContent,
+  ModalOverlay,
+  ModalCloseButton,
+} from '@chakra-ui/react'
+import { GiPartyPopper } from 'react-icons/gi';
+// @ts-ignore
+import Confetti from 'react-confetti';
 
 import { Web3ModalService, IWalletInfo } from "../../services";
 
@@ -46,6 +64,13 @@ interface ICurrentUserState {
   connect: (retryCount?: number) => Promise<void>;
 }
 
+const ConfettiComp = () => {
+  return (
+    // @ts-ignore
+    <Confetti />
+  )
+}
+
 export const UserContext = createContext<ICurrentUserState>({
   minting: false,
   isLoading: false,
@@ -67,6 +92,8 @@ export const UserProvider: FunctionComponent = ({ children }) => {
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
   const [thirdWebSdk, setThirdWebSdk] = useState<ThirdwebSDK>();
+  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState<boolean>(false);
+  const link = `${process.env.NEXT_PUBLIC_OPEN_SEA_LINK}/${process.env.NEXT_PUBLIC_THIRD_WEB_NFT_MODULE}/${nft?.id}`;
 
   /* ========== ACTIONS ========== */
   const handleGetWalletInfo = useCallback(async () => {
@@ -126,6 +153,7 @@ export const UserProvider: FunctionComponent = ({ children }) => {
       const nftMinted = await module.mintWithSignature(data.payload, data.signature);
       const mintedNft = await module.get(nftMinted.toString());
       setNft(mintedNft);
+      setIsSuccessModalVisible(true);
       return true;
     } catch(ex) {
       console.log(ex);
@@ -209,7 +237,32 @@ export const UserProvider: FunctionComponent = ({ children }) => {
         switchNetwork: handleSwitchNetwork,
       }}
     >
+      {isSuccessModalVisible && <ConfettiComp />}
       {children}
+      <Modal isOpen={isSuccessModalVisible} onClose={() => setIsSuccessModalVisible(false)}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>
+            Congratulations
+            <Icon as={GiPartyPopper} ml={2} />
+            <Icon as={GiPartyPopper} ml={1} />
+          </ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <Flex direction="column" justify="center" align="center" gap={4}>
+              <Image src={nft?.image} alt="NFT Image" />
+              <Heading textAlign="center" mx={1}>{nft?.name?.toUpperCase()}</Heading>
+              <Text textAlign="center">Your NFT avatar is an image and public profile that follows you from site to site when you do things like comment or post on a web3 DAPP. The information that you provide here will become a part of your public profile at NFT avatar.</Text>
+            </Flex>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button colorScheme='blue' mr={3} onClick={() => window.open(link, '_blank').focus()}>
+              View on Opensea
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </UserContext.Provider>
   );
 };

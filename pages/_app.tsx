@@ -8,14 +8,14 @@ import { UserProvider } from '../components/UserContext/UserProvider';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <UserProvider>
-      <ChakraProvider theme={theme}>
+    <ChakraProvider theme={theme}>
+        <UserProvider>
         <Header />
         <Container
           maxW={[
             null,
             null,
-            "container.md",
+            "container.lg",
             "container.lg",
             "container.xl",
           ]}
@@ -23,8 +23,8 @@ function MyApp({ Component, pageProps }: AppProps) {
         >
           <Component {...pageProps} />
         </Container>
-      </ChakraProvider>
-    </UserProvider>
+      </UserProvider>
+    </ChakraProvider>
   );
 }
 
