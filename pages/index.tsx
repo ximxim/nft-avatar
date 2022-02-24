@@ -17,8 +17,9 @@ import {
   BsShieldLockFill,
   BsFillCheckCircleFill,
 } from "react-icons/bs";
-import { RiUser5Fill } from "react-icons/ri";
+import { RiUser5Fill, RiLeafFill } from "react-icons/ri";
 import { VscArrowRight } from 'react-icons/vsc';
+import { AiOutlineSafetyCertificate } from 'react-icons/ai';
 import { MdOutlineAlternateEmail } from "react-icons/md";
 
 import { Card, useUserContext, IDForm } from "../components";
@@ -75,6 +76,13 @@ const Home: NextPage = () => {
               icon2={MdOutlineAlternateEmail}
               heading="More than just an image."
               body="Instantly tell the web3 who you are and where people can find you. NFT avatar can display avatar, wallet address, and other details such as properties."
+            />
+            <Card
+              flex={1}
+              icon={RiLeafFill}
+              icon2={AiOutlineSafetyCertificate}
+              heading="Environmentally friendly NFTs"
+              body="Your avatar is created on Polygon chain. The gas prices are manageable and transactions are very green."
             />
             <Card
               icon={BsShieldLockFill}
