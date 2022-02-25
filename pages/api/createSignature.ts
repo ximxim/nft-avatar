@@ -58,7 +58,7 @@ export default async function handler(
       currencyAddress: NATIVE_TOKEN_ADDRESS,
       mintStartTimeEpochSeconds: Math.floor(Date.now() / 1000),
       mintEndTimeEpochSeconds:
-        Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365,
+        Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 1000,
       to: "0x0000000000000000000000000000000000000000",
     });
 
