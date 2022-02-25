@@ -52,13 +52,15 @@ export default async function handler(
     );
     const module = sdk.getNFTModule(moduleAddress);
 
+    const mintStartTimeEpochSeconds = Math.floor(Date.now() / 1000) - 60 * 60 * 24 * 365;
+    const mintEndTimeEpochSeconds = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365;
+    console.log(mintStartTimeEpochSeconds, mintEndTimeEpochSeconds);
     const { payload, signature } = await module.generateSignature({
       metadata,
       price: 0,
       currencyAddress: NATIVE_TOKEN_ADDRESS,
-      mintStartTimeEpochSeconds: Math.floor(Date.now() / 1000),
-      mintEndTimeEpochSeconds:
-        Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 365 * 50,
+      mintStartTimeEpochSeconds,
+      mintEndTimeEpochSeconds,
       to: "0x0000000000000000000000000000000000000000",
     });
 
