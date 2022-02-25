@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import dynamic from 'next/dynamic';
+// @ts-ignore
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import type { NextPage } from "next";
 import {
