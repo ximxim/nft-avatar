@@ -14,7 +14,7 @@ export const config = {
 };
 
 const privateKey = process.env.NEXT_PUBLIC_WALLET_KEY as string;
-const rpcUrl = process.env.NEXT_PUBLIC_ALCHEMY_URL as string;
+const rpcUrl = process.env.NEXT_PUBLIC_NETWORK_RPC_URL as string;
 const moduleAddress = process.env.NEXT_PUBLIC_THIRD_WEB_NFT_MODULE as string;
 
 const post = async (
