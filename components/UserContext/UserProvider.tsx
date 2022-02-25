@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios from "axios";
 import { useRouter } from "next/router";
 import {
   useState,
@@ -7,7 +7,7 @@ import {
   createContext,
   FunctionComponent,
 } from "react";
-import { ThirdwebSDK, IAppModule, NFTMetadata } from '@3rdweb/sdk';
+import { ThirdwebSDK, IAppModule, NFTMetadata } from "@3rdweb/sdk";
 import { getDefaultProvider, BigNumber } from "ethers";
 import { EIP1193Provider } from "ethereum-types";
 import {
@@ -18,16 +18,17 @@ import {
   Modal,
   Button,
   Heading,
+  useToast,
   ModalBody,
   ModalHeader,
   ModalFooter,
   ModalContent,
   ModalOverlay,
   ModalCloseButton,
-} from '@chakra-ui/react'
-import { GiPartyPopper } from 'react-icons/gi';
+} from "@chakra-ui/react";
+import { GiPartyPopper } from "react-icons/gi";
 // @ts-ignore
-import Confetti from 'react-confetti';
+import Confetti from "react-confetti";
 
 import { Web3ModalService, IWalletInfo } from "../../services";
 
@@ -36,16 +37,16 @@ const moduleAddress = process.env.NEXT_PUBLIC_THIRD_WEB_NFT_MODULE as string;
 
 interface SignatureResponse {
   payload: {
-    to: string,
-    id: string,
-    uri: string,
-    price: number,
-    metadata: NFTMetadata,
-    currencyAddress: string,
-    mintEndTimeEpochSeconds: number,
-    mintStartTimeEpochSeconds: number,
-  },
-  signature: string,
+    to: string;
+    id: string;
+    uri: string;
+    price: number;
+    metadata: NFTMetadata;
+    currencyAddress: string;
+    mintEndTimeEpochSeconds: number;
+    mintStartTimeEpochSeconds: number;
+  };
+  signature: string;
 }
 
 interface ICurrentUserState {
@@ -68,8 +69,8 @@ const ConfettiComp = () => {
   return (
     // @ts-ignore
     <Confetti />
-  )
-}
+  );
+};
 
 export const UserContext = createContext<ICurrentUserState>({
   minting: false,
@@ -84,6 +85,7 @@ export const UserContext = createContext<ICurrentUserState>({
 });
 
 export const UserProvider: FunctionComponent = ({ children }) => {
+  const toast = useToast();
   const router = useRouter();
   const [walletInfo, setWalletInfo] = useState<IWalletInfo>();
   const [nft, setNft] = useState<NFTMetadata>();
@@ -92,7 +94,8 @@ export const UserProvider: FunctionComponent = ({ children }) => {
   const [isConnecting, setIsConnecting] = useState<boolean>(false);
   const [isCorrectNetwork, setIsCorrectNetwork] = useState<boolean>(false);
   const [thirdWebSdk, setThirdWebSdk] = useState<ThirdwebSDK>();
-  const [isSuccessModalVisible, setIsSuccessModalVisible] = useState<boolean>(false);
+  const [isSuccessModalVisible, setIsSuccessModalVisible] =
+    useState<boolean>(false);
   const link = `${process.env.NEXT_PUBLIC_OPEN_SEA_LINK}/${process.env.NEXT_PUBLIC_THIRD_WEB_NFT_MODULE}/${nft?.id}`;
 
   /* ========== ACTIONS ========== */
@@ -105,7 +108,7 @@ export const UserProvider: FunctionComponent = ({ children }) => {
   const handleDisconnectWallet = useCallback(() => {
     Web3ModalService.disconnect();
     setWalletInfo(undefined);
-    router.replace('/');
+    router.replace("/");
   }, []);
 
   const handleSwitchNetwork = useCallback(async () => {
@@ -144,35 +147,56 @@ export const UserProvider: FunctionComponent = ({ children }) => {
     [handleDisconnectWallet, handleGetWalletInfo, handleSwitchNetwork]
   );
 
-  const handleMint = useCallback(async (body: FormData) => {
-    try {
-      if (!thirdWebSdk || !body) throw 'deps not ready';
-      setMinting(true);
-      const { data } = await axios.post<SignatureResponse>('/api/createSignature', body);
-      const module = thirdWebSdk.getNFTModule(moduleAddress);
-      const nftMinted = await module.mintWithSignature(data.payload, data.signature);
-      const mintedNft = await module.get(nftMinted.toString());
-      setNft(mintedNft);
-      setIsSuccessModalVisible(true);
-      return true;
-    } catch(ex) {
-      console.log(ex);
-      return false;
-    } finally {
-      setMinting(false);
-    }
-  }, [thirdWebSdk]);
+  const handleMint = useCallback(
+    async (body: FormData) => {
+      try {
+        if (!thirdWebSdk || !body) throw "deps not ready";
+        setMinting(true);
+        const { data } = await axios.post<SignatureResponse>(
+          "/api/createSignature",
+          body
+        );
+        console.log(data);
+        const module = thirdWebSdk.getNFTModule(moduleAddress);
+        const nftMinted = await module.mintWithSignature(
+          data.payload,
+          data.signature
+        );
+        const mintedNft = await module.get(nftMinted.toString());
+        setNft(mintedNft);
+        setIsSuccessModalVisible(true);
+        return true;
+      } catch (ex) {
+        console.log(ex);
+        toast({
+          title: "Error",
+          description: "Unable to mint at the moment. Please try again.",
+          duration: 9000,
+          isClosable: true,
+          position: "bottom-right",
+          status: "error",
+        });
+        return false;
+      } finally {
+        setMinting(false);
+      }
+    },
+    [thirdWebSdk]
+  );
 
-  const getBalance = useCallback(async (nftId: string) => {
-    try {
-      if (!thirdWebSdk || !nftId) throw 'deps not ready';
-      const module = thirdWebSdk.getBundleDropModule(moduleAddress);
-      const balance = await module.balance(nftId);
-      return balance;
-    } catch {
-      return BigNumber.from(0);
-    }
-  }, [thirdWebSdk]);
+  const getBalance = useCallback(
+    async (nftId: string) => {
+      try {
+        if (!thirdWebSdk || !nftId) throw "deps not ready";
+        const module = thirdWebSdk.getBundleDropModule(moduleAddress);
+        const balance = await module.balance(nftId);
+        return balance;
+      } catch {
+        return BigNumber.from(0);
+      }
+    },
+    [thirdWebSdk]
+  );
 
   /* ========== EFFECTS ========== */
   useEffect(() => {
@@ -180,18 +204,6 @@ export const UserProvider: FunctionComponent = ({ children }) => {
     if (!!cachedProvider) {
       connect();
     }
-
-    // (async () => {
-    //   try {
-    //     setIsLoading(true);
-    //     const sdk = new ThirdwebSDK(getDefaultProvider(rpcUrl))
-    //     const module = sdk.getBundleDropModule(moduleAddress);
-    //     const all = await module.getAll();
-    //     // setNft(all[0]);
-    //   } finally {
-    //     setIsLoading(false);
-    //   }
-    // })();
 
     const provider = window.ethereum as EIP1193Provider;
 
@@ -239,7 +251,10 @@ export const UserProvider: FunctionComponent = ({ children }) => {
     >
       {isSuccessModalVisible && <ConfettiComp />}
       {children}
-      <Modal isOpen={isSuccessModalVisible} onClose={() => setIsSuccessModalVisible(false)}>
+      <Modal
+        isOpen={isSuccessModalVisible}
+        onClose={() => setIsSuccessModalVisible(false)}
+      >
         <ModalOverlay />
         <ModalContent>
           <ModalHeader>
@@ -251,13 +266,24 @@ export const UserProvider: FunctionComponent = ({ children }) => {
           <ModalBody>
             <Flex direction="column" justify="center" align="center" gap={4}>
               <Image src={nft?.image} alt="NFT Image" />
-              <Heading textAlign="center" mx={1}>{nft?.name?.toUpperCase()}</Heading>
-              <Text textAlign="center">Your NFT avatar is an image and public profile that follows you from site to site when you do things like comment or post on a web3 DAPP. The information that you provide here will become a part of your public profile at NFT avatar.</Text>
+              <Heading textAlign="center" mx={1}>
+                {nft?.name?.toUpperCase()}
+              </Heading>
+              <Text textAlign="center">
+                Your NFT avatar is an image and public profile that follows you
+                from site to site when you do things like comment or post on a
+                web3 DAPP. The information that you provide here will become a
+                part of your public profile at NFT avatar.
+              </Text>
             </Flex>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme='blue' mr={3} onClick={() => window.open(link, '_blank').focus()}>
+            <Button
+              colorScheme="blue"
+              mr={3}
+              onClick={() => window.open(link, "_blank").focus()}
+            >
               View on Opensea
             </Button>
           </ModalFooter>
