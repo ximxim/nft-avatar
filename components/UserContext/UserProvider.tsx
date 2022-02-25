@@ -282,6 +282,7 @@ export const UserProvider: FunctionComponent = ({ children }) => {
             <Button
               colorScheme="blue"
               mr={3}
+              // @ts-ignore
               onClick={() => window.open(link, "_blank").focus()}
             >
               View on Opensea
