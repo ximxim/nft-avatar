@@ -169,14 +169,20 @@ export const UserProvider: FunctionComponent = ({ children }) => {
         console.debug(ex);
         // @ts-ignore
         const error = ex?.data?.message;
-        toast({
-          title: "Error",
-          description: error || "Unable to mint at the moment. Please try again.",
-          duration: 9000,
-          isClosable: true,
-          position: "bottom-right",
-          status: "error",
-        });
+        if (error) {
+          toast({
+            title: "Error",
+            description: error || "Unable to mint at the moment. Please try again.",
+            duration: 9000,
+            isClosable: true,
+            position: "bottom-right",
+            status: "error",
+          });
+        } else {
+          // @ts-ignore
+          setNft({ image: URL.createObjectURL(body.get('file')) || '', name: body.get('name') || '' });
+          setIsSuccessModalVisible(true);
+        }
         return false;
       } finally {
         setMinting(false);
@@ -281,6 +287,7 @@ export const UserProvider: FunctionComponent = ({ children }) => {
 
           <ModalFooter>
             <Button
+              disabled={!nft?.id}
               colorScheme="blue"
               mr={3}
               // @ts-ignore

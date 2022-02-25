@@ -48,7 +48,6 @@ export const IDForm: FunctionComponent = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [properties, setProperties] = useState<PropertiesFormValues[]>([]);
   const { mint, minting, nft, walletInfo } = useUserContext();
-  console.log(nft);
   const {
     register,
     setValue,
