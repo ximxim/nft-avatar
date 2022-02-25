@@ -31,6 +31,7 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     (async() => {
+      // @ts-ignore
       const solarizedDark = await import('react-syntax-highlighter/dist/esm/styles/hljs/tomorrow-night');
       setSolarized(solarizedDark.default);
     })();
