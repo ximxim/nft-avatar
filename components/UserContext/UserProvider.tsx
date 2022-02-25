@@ -156,7 +156,6 @@ export const UserProvider: FunctionComponent = ({ children }) => {
           "/api/createSignature",
           body
         );
-        console.log(data);
         const module = thirdWebSdk.getNFTModule(moduleAddress);
         const nftMinted = await module.mintWithSignature(
           data.payload,
@@ -167,10 +166,12 @@ export const UserProvider: FunctionComponent = ({ children }) => {
         setIsSuccessModalVisible(true);
         return true;
       } catch (ex) {
-        console.log(ex);
+        console.debug(ex);
+        // @ts-ignore
+        const error = ex?.data?.message;
         toast({
           title: "Error",
-          description: "Unable to mint at the moment. Please try again.",
+          description: error || "Unable to mint at the moment. Please try again.",
           duration: 9000,
           isClosable: true,
           position: "bottom-right",
